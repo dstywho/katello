@@ -40,4 +40,10 @@ class OrganizationTestCreate < OrganizationTestBase
   end
 
 end
+
+class OrganizationUpdateTestCase < OrganizationTestBase
+  def test_label
+  end
+  
+end
 end

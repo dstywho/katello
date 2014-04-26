@@ -160,7 +160,7 @@ class ActiveSupport::TestCase
     org = org.nil? ? :empty_organization : org
     organization = Organization.find(taxonomies(org.to_sym))
     organization.setup_label_from_name
-    organization.save!
+    organization.save(:validate => false)
     User.current = saved_user
     organization
   end

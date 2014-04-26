@@ -49,6 +49,12 @@ describe Organization do
       o.default_info["system"] << ("a" * 300)
       o.wont_be :valid?
     end
+    specify do
+      o = Organization.new(:name => 'name', :label => 'label')
+      o.stubs(:new_record?).returns(false)
+      o.label = 'changed'
+      o.wont_be :valid?
+    end
   end
 
   describe "create an organization" do
