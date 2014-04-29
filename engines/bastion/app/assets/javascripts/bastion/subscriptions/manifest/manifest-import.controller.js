@@ -27,8 +27,8 @@
  *   Controls the import of a manifest.
  */
 angular.module('Bastion.subscriptions').controller('ManifestImportController',
-    ['$scope', '$q', 'translate', 'CurrentOrganization', 'Organization', 'Subscription', 'Task',
-    function ($scope, $q, translate, CurrentOrganization, Organization, Subscription, Task) {
+    ['$scope', '$q', 'translate', 'CurrentOrganization', 'Organization', 'Task', 'Subscription',
+    function ($scope, $q, translate, CurrentOrganization, Organization, Task, Subscription) {
 
         $scope.uploadErrorMessages = [];
         $scope.progress = {uploading: false};
@@ -61,6 +61,7 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
                     $scope.refreshTable();
                 }
             } else if ($scope.task.result === 'error') {
+                $scope.manifestHistory.fetchManifestHistory();
                 $scope.errorMessages.push(translate("Error importing manifest."));
             }
         };
@@ -86,11 +87,13 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
                     $scope.refreshOrganizationInfo();
                 }
             } else if ($scope.deleteTask.result === 'error') {
+                $scope.manifestHistory.fetchManifestHistory();
                 $scope.errorMessages.push(translate("Error deleting manifest."));
             }
         };
 
         $scope.refreshOrganizationInfo = function () {
+            $scope.manifestHistory.fetchManifestHistory();
             $scope.organization = Organization.get({id: CurrentOrganization});
             $q.all([$scope.organization.$promise]).then(function () {
                 initializeManifestDetails($scope.organization);
@@ -119,6 +122,7 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
                 }
             } else if ($scope.refreshTask.result === 'error') {
                 $scope.errorMessages.push(translate("Error refreshing manifest."));
+                $scope.manifestHistory.fetchManifestHistory();
             }
         };
 
@@ -135,6 +139,9 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
                 angular.forEach(response.data.errors, function (errorMessage) {
                     $scope.errorMessages.push(translate("An error occurred saving the URL: ") + errorMessage);
                 });
+                $scope.getManifestHistory();
+                $scope.saveError = true;
+                $scope.errors = response.data.errors;
             });
 
             return deferred.promise;
@@ -181,12 +188,6 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
         };
 
         function initializeManifestDetails(organization) {
-            $scope.manifestStatuses = $scope.manifestHistory();
-            if ($scope.manifestStatuses.length > 4) {
-                $scope.manifestStatuses = _.first($scope.manifestStatuses, 3);
-                $scope.showHistoryMoreLink = true;
-            }
-
             $scope.details = organization['owner_details'];
             $scope.upstream = $scope.details.upstreamConsumer;
 
@@ -195,5 +196,8 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
                 $scope.manifestName = $scope.upstream["name"] || $scope.upstream["uuid"];
             }
         }
+
+        $scope.manifestHistory.isManifestHistoryTruncate = true;
+        $scope.manifestHistory.isTruncating(function () { $scope.showHistoryMoreLink = true; });
     }]
 );

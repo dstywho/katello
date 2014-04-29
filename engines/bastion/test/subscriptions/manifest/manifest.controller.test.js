@@ -21,47 +21,50 @@ describe('Controller: ManifestController', function() {
 
         translate = function(a) { return a };
         $scope = $rootScope.$new();
+        Subscription = $injector.get('Subscription');
         $controller('ManifestController', {
             $scope: $scope,
             translate: translate,
-
+            Subscription: Subscription
         });
     }));
 
-
-    it("should provide a method to get history for a provider", function() {
-        var provider,
-            history;
-
-        provider = {
-            name: "Red Hat",
-            id: 1,
-            owner_imports: [
-                {
-                    statusMessage: "metamorphosis by kafka",
-                    created: "1915-10-25"
-                },
-                {
-                    webAppPrefix: "dickens",
-                    upstreamName: "bleakhouse",
-                    created: "1852-03-03"
-                }
-            ]
-        };
-
-        history = provider.owner_imports.slice(0);
-        history.push({
-            statusMessage: "Manifest from bleakhouse.",
-            created: "1852-03-03"
-        });
-
-        $scope.redhatProvider = provider;
-
-        expect($scope.manifestHistory(provider)).toEqual(history);
-        expect($scope.manifestHistory(provider).length).toBe(3);
-        expect($scope.manifestHistory(provider)[0]).toBe(history[0]);
-        expect($scope.manifestHistory(provider)[1]).toBe(history[1]);
-        expect($scope.manifestHistory(provider)[2].statusMessage).toBe(history[2].statusMessage);
-        expect($scope.manifestHistory(provider)[2].created).toBe(history[2].created);
+    it('should attach manifestHistory object to the scope', function() {
+        expect($scope.manifestHistory).toBeDefined();
     });
+
+    it('should be able to fetch histories from manifestHistory object', function() {
+        expect($scope.manifestHistory.fetchManifestHistory).toBeDefined();
+        spyOn(Subscription, 'manifestHistory');
+        $scope.manifestHistory.fetchManifestHistory();
+        expect(Subscription.manifestHistory).toHaveBeenCalled();
+    });
+
+    it('should be provide a means of getting fetched manifest history results', function() {
+        expect($scope.manifestHistory.getHistories).toBeDefined();
+
+        var results = {};
+        spyOn(Subscription, 'manifestHistory').andReturn(results);
+        $scope.manifestHistory.fetchManifestHistory();
+
+        expect($scope.manifestHistory.getHistories()).toBeDefined();
+        expect($scope.manifestHistory.getHistories()).toBe(results);
+
+        expect($scope.manifestHistory.getHistories()).toBe(results);
+    });
+
+    it('should be provide a means of truncating manifestHistory', function() {
+        var numToDisplay = 10
+        var minIndexOfHidden = numToDisplay;
+        var maxIndexOfShown = numToDisplay - 1;
+
+        expect($scope.manifestHistory.isManifestHistoryEventRowHidden).toBeDefined();
+        $scope.manifestHistory.numManifestHistoryShownDuringTruncation = numToDisplay;
+        $scope.manifestHistory.isManifestHistoryTruncate = true;
+        expect($scope.manifestHistory.isManifestHistoryEventRowHidden(minIndexOfHidden)).toBe(true);
+        expect($scope.manifestHistory.isManifestHistoryEventRowHidden(minIndexOfHidden + 1)).toBe(true);
+        expect($scope.manifestHistory.isManifestHistoryEventRowHidden(maxIndexOfShown)).toBe(false);
+        expect($scope.manifestHistory.isManifestHistoryEventRowHidden(maxIndexOfShown - 1)).toBe(false);
+    });
+
 });

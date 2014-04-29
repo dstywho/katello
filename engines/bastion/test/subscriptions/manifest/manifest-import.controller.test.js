@@ -57,7 +57,10 @@ describe('Controller: ManifestImportController', function() {
         Task = {registerSearch: function() {}};
 
         // stub out manifestHistory since it's being tested elsewhere
-        $scope.manifestHistory = function(prov) { return history; };
+        $scope.manifestHistory = { 
+            fetchManifestHistory: function(){ $scope._manifestHistory = []; },
+            isTruncating: function () { return true; } 
+        }
 
         translate = function(a) { return a };
 

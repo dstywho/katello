@@ -101,6 +101,7 @@ Katello::Engine.routes.draw do
           end
         end
         member do
+          get :manifest_history
           post :repo_discover
           post :cancel_repo_discover
           post :autoattach_subscriptions
@@ -111,6 +112,7 @@ Katello::Engine.routes.draw do
         api_resources :subscriptions, :only => [:index] do
           collection do
             match '/available' => 'subscriptions#available', :via => :get
+            get :manifest_history
           end
         end
         api_resources :system_groups, :only => [:index, :create]
