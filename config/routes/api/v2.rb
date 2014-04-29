@@ -101,6 +101,7 @@ Katello::Engine.routes.draw do
           end
         end
         member do
+					get :manifest_history
           post :repo_discover
           post :cancel_repo_discover
           post :autoattach_subscriptions

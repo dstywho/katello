@@ -16,7 +16,7 @@ module Katello
     include Api::V2::Rendering
     include ForemanTasks::Triggers
 
-    before_filter :local_find_taxonomy, :only => %w{repo_discover cancel_repo_discover download_debug_certificate}
+    before_filter :local_find_taxonomy, :only => %w{repo_discover cancel_repo_discover download_debug_certificate manifest_history}
 
     resource_description do
       api_version 'v2'
@@ -104,10 +104,18 @@ module Katello
       respond_for_async :resource => async_job
     end
 
+    api :GET, "/organizations/:id/manifest_history", "Get manifest history"
+    def manifest_history
+      @data = @organization.manifest_history
+      @manifest_history = @data.map{|d| OpenStruct.new(status: d['statusMessage'], time: d['created']) }
+      #respond_for_show :manifest_history => @manifest_history 
+      respond_with_template_collection(params[:action],"organizations",{object_name: 'manifest_history', object_root: 'manifest_history', collection: @manifest_history})
+    end
+
     protected
 
     def action_permission
-      if %w(download_debug_certificate repo_discover cancel_repo_discover).include?(params[:action])
+      if %w(download_debug_certificate repo_discover cancel_repo_discover manifest_history).include?(params[:action])
         :edit
       else
         super

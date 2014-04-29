@@ -37,6 +37,7 @@ module Katello
           yield if block_given?
           status = options[:status] || 200
 
+          debugger
           render :template => "katello/api/v2/#{resource_name}/#{action}",
                  :status => status,
                  :locals => { :object_name => options[:object_name],

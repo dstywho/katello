@@ -116,6 +116,10 @@ module Katello
           self.providers.redhat.first
         end
 
+        def manifest_history
+          imports
+        end
+
         def repo_discovery_task
           self.task_statuses.where(:task_type => :repo_discovery).order('created_at DESC').first
         end

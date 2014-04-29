@@ -32,6 +32,8 @@ angular.module('Bastion.subscriptions').controller('ManifestController',
 
             angular.forEach(provider['owner_imports'], function (value) {
                 statuses.push(value);
+                console.log("hihiihihiihihihihiihihihih");
+                debugger
 
                 if (value['webAppPrefix'] !== undefined) {
                     var message = translate("Manifest from %s.").replace('%s', value['upstreamName']);
