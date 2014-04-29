@@ -33,5 +33,10 @@ module Katello
       assert_response :success
     end
 
+    test 'test manifest history should be successful' do 
+      @org.stubs(:manifest_history).returns([])
+      get :manifest_history
+      assert_response :success
+    end
   end
 end

@@ -23,7 +23,7 @@
  *   Controls the managment of manifests for use by sub-controllers.
  */
 angular.module('Bastion.subscriptions').controller('ManifestController',
-    ['$scope', 'translate', 'Provider', function ($scope, translate, Provider) {
+    ['$scope', 'translate', 'Provider', 'Subscription', function ($scope, translate, Provider, Subscription) {
 
         $scope.panel = {loading: true};
 
@@ -41,6 +41,14 @@ angular.module('Bastion.subscriptions').controller('ManifestController',
             });
 
             return statuses;
+        };
+
+        $scope.manifestHistory = Subscription.manifestHistory();
+        $scope.isManifestHistoryTruncate = false;
+        $scope.numManifestHistoryShownDuringTruncation = 3;
+        $scope.showHistoryMoreLink = false;
+        $scope.isManifestHistoryEventRowHidden = function (isTruncateOn, index) {
+            return isTruncateOn === true && index >= $scope.numManifestHistoryShownDuringTruncation;
         };
 
         $scope.provider = Provider.get({id: $scope.$stateParams.providerId});

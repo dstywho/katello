@@ -110,7 +110,7 @@ angular.module('Bastion.subscriptions').config(['$stateProvider', function ($sta
         templateUrl: 'subscriptions/manifest/views/manifest-details.html'
     })
     .state('subscriptions.manifest.history', {
-        url: '/subscriptions/manifest/history/:providerId',
+        url: '/subscriptions/manifest/history',
         collapsed: true,
         controller: 'ManifestHistoryController',
         templateUrl: 'subscriptions/manifest/views/manifest-import-history.html'

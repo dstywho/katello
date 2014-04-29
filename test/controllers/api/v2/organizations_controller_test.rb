@@ -43,6 +43,14 @@ module Katello
       assert_equal results.keys.sort, ['page', 'per_page', 'results', 'search', 'sort', 'subtotal', 'total']
     end
 
+    def test_manifest_history_
+      Organization.any_instance.stubs(:manifest_history).returns([])
+      JSON.parse(get(:manifest_history).body)
+
+      assert_response :success
+      assert_template 'api/v2/organizations/manifest_history'
+    end
+
     def test_show
       results = JSON.parse(get(:show, :id => @organization.id).body)
 

@@ -24,7 +24,9 @@
 angular.module('Bastion.subscriptions').factory('Subscription', ['BastionResource', 'CurrentOrganization',
     function (BastionResource, CurrentOrganization) {
 
-        return BastionResource('/api/v2/organizations/:org/subscriptions/:id/:action', {'org': CurrentOrganization}, {});
+        return BastionResource('/api/v2/organizations/:org/subscriptions/:id/:action', {'org': CurrentOrganization}, {
+            manifestHistory: { method: 'GET', params: {action: 'manifest_history'}, isArray: true, url:  '/api/v2/organizations/:org/subscriptions/:action' }
+        });
 
     }]
 );
