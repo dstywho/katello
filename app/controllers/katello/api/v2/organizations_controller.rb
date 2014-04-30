@@ -16,7 +16,7 @@ module Katello
     include Api::V2::Rendering
     include ForemanTasks::Triggers
 
-    before_filter :local_find_taxonomy, :only => %w{repo_discover cancel_repo_discover download_debug_certificate redhat_provider update}
+    before_filter :local_find_taxonomy, :only => %w{repo_discover cancel_repo_discover download_debug_certificate manifest_history redhat_provider update}
 
     resource_description do
       api_version 'v2'
@@ -116,10 +116,17 @@ module Katello
                        :resource_name => "providers")
     end
 
+    api :GET, "/organizations/:id/manifest_history", "Get manifest history"
+    param :id, String, :desc => "organization id, label, or name"
+    def manifest_history
+      @manifest_history = @organization.manifest_history;
+      respond_with_template_collection(params[:action],"organizations",{object_name: 'manifest_history', object_root: 'manifest_history', collection: @manifest_history})
+    end
+
     protected
 
     def action_permission
-      if %w(download_debug_certificate redhat_provider repo_discover cancel_repo_discover).include?(params[:action])
+      if %w(download_debug_certificate redhat_provider repo_discover cancel_repo_discover manifest_history).include?(params[:action])
         :edit
       else
         super

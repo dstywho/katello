@@ -61,6 +61,7 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
                     $scope.refreshTable();
                 }
             } else if ($scope.task.result === 'error') {
+                $scope.manifestHistory = Subscription.manifestHistory();
                 $scope.errorMessages.push(translate("Error importing manifest."));
             }
         };
@@ -91,6 +92,7 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
         };
 
         $scope.refreshOrganizationInfo = function () {
+            $scope.manifestHistory = Subscription.manifestHistory();
             $scope.organization = Organization.get({id: CurrentOrganization});
             $q.all([$scope.organization.$promise]).then(function () {
                 initializeManifestDetails($scope.organization);
@@ -102,6 +104,7 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
                 $scope.refreshTask =  returnData;
                 $scope.searchId = Task.registerSearch({ 'type': 'task', 'task_id':  $scope.refreshTask.id }, $scope.refreshManifestTask);
             }, function (response) {
+                $scope.manifestHistory = Subscription.manifestHistory();
                 $scope.saveError = true;
                 $scope.errors = response.data.errors;
             });
@@ -135,6 +138,9 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
                 angular.forEach(response.data.errors, function (errorMessage) {
                     $scope.errorMessages.push(translate("An error occurred saving the URL: ") + errorMessage);
                 });
+                $scope.manifestHistory = Subscription.manifestHistory();
+                $scope.saveError = true;
+                $scope.errors = response.data.errors;
             });
 
             return deferred.promise;
@@ -181,12 +187,6 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
         };
 
         function initializeManifestDetails(organization) {
-            $scope.manifestStatuses = $scope.manifestHistory();
-            if ($scope.manifestStatuses.length > 4) {
-                $scope.manifestStatuses = _.first($scope.manifestStatuses, 3);
-                $scope.showHistoryMoreLink = true;
-            }
-
             $scope.details = organization['owner_details'];
             $scope.upstream = $scope.details.upstreamConsumer;
 
@@ -195,5 +195,11 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
                 $scope.manifestName = $scope.upstream["name"] || $scope.upstream["uuid"];
             }
         }
+
+        //$scope.manifestHistory = Subscription.manifestHistory();
+        $scope.isManifestHistoryTruncate = true;
+        $scope.manifestHistory.$promise.then(function (result) {
+            $scope.showHistoryMoreLink = (result.length > $scope.numManifestHistoryShownDuringTruncation) ? true : false;
+        });
     }]
 );
