@@ -6,7 +6,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="status in manifestHistory.getHistories() track by $index"  ng-hide="{{ manifestHistory.isManifestHistoryEventRowHidden($index) }}">
+    <tr ng-repeat="status in statuses track by $index">
         <td >
           <span ng-class="status.status == 'FAILURE' ? 'icon-warning-sign' : 'icon-ok'" />
           {{ status.statusMessage }}

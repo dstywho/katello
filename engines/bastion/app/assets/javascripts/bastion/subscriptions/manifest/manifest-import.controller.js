@@ -61,7 +61,7 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
                     $scope.refreshTable();
                 }
             } else if ($scope.task.result === 'error') {
-                $scope.manifestHistory.fetchManifestHistory();
+                $scope.histories = Subscription.manifestHistory();
                 $scope.errorMessages.push(translate("Error importing manifest."));
             }
         };
@@ -87,13 +87,13 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
                     $scope.refreshOrganizationInfo();
                 }
             } else if ($scope.deleteTask.result === 'error') {
-                $scope.manifestHistory.fetchManifestHistory();
+                $scope.histories = Subscription.manifestHistory();
                 $scope.errorMessages.push(translate("Error deleting manifest."));
             }
         };
 
         $scope.refreshOrganizationInfo = function () {
-            $scope.manifestHistory.fetchManifestHistory();
+            $scope.histories = Subscription.manifestHistory();
             $scope.organization = Organization.get({id: CurrentOrganization});
             $q.all([$scope.organization.$promise]).then(function () {
                 initializeManifestDetails($scope.organization);
@@ -122,7 +122,7 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
                 }
             } else if ($scope.refreshTask.result === 'error') {
                 $scope.errorMessages.push(translate("Error refreshing manifest."));
-                $scope.manifestHistory.fetchManifestHistory();
+                $scope.histories = Subscription.manifestHistory();
             }
         };
 
@@ -197,7 +197,42 @@ angular.module('Bastion.subscriptions').controller('ManifestImportController',
             }
         }
 
-        $scope.manifestHistory.isManifestHistoryTruncate = true;
-        $scope.manifestHistory.isTruncating(function () { $scope.showHistoryMoreLink = true; });
+        var truncateHistories = function (histories){
+           var numToDisplay = 4;
+           var result = [];
+           angular.forEach(histories, function (history, index) {
+             if (index < numToDisplay ){
+               result.push(history);
+             }
+           });
+           return result;
+        }
+
+
+        $scope.isTruncate = function (subset) {
+          return $scope.histories.$promise.then(function (histories) {
+            if (_.isUndefined(subset)) {
+              return false;
+            } else {
+              return subset.length < histories.length;
+            }
+          });
+        }
+
+        $scope.$watch('histories', function (changes) {
+          changes.$promise.then(function(results){
+            $scope.statuses = truncateHistories(results);
+          });
+        });
+
+        $scope.$watch('statuses', function (results,oldresults) {
+            $scope.isTruncate(results).then(function (isTruncate) {
+              if(isTruncate){
+                $scope.showHistoryMoreLink = true;
+              } else {
+                $scope.showHistoryMoreLink = false;
+              }
+            });
+        });
     }]
 );

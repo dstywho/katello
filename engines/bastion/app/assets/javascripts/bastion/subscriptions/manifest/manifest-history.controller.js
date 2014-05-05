@@ -22,8 +22,8 @@
  */
 angular.module('Bastion.subscriptions').controller('ManifestHistoryController',
     ['$scope', function ($scope) {
-        $scope.manifestHistory.isManifestHistoryTruncate = false;
-        $scope.manifestHistory.getHistories().$promise.then(function () {
+        $scope.statuses = $scope.histories
+        $scope.histories.$promise.then(function () {
             $scope.panel.loading = false;
         });
     }]

@@ -23,12 +23,9 @@
  *   Controls the managment of manifests for use by sub-controllers.
  */
 angular.module('Bastion.subscriptions').controller('ManifestController',
-    ['$scope', 'translate', 'ManifestHistoryService', function ($scope, translate, ManifestHistoryService) {
+    ['$scope', 'translate', 'Subscription', function ($scope, translate, Subscription) {
 
         $scope.panel = {loading: true};
-
-        $scope.manifestHistory = ManifestHistoryService;
-        $scope.manifestHistory.fetchManifestHistory();
-
+        $scope.histories = Subscription.manifestHistory();
     }]
 );
