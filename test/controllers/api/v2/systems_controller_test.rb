@@ -88,7 +88,7 @@ class Api::V2::SystemsControllerTest < ActionController::TestCase
     non_existent_id = 1112321312312
 
     post :create, :name => 'foo', :system_uuids => [non_existent_id]
-    assert_response :fail
+    assert_response :missing
   end
 
   def test_refresh_subscriptions
