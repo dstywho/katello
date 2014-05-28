@@ -64,12 +64,7 @@ module Katello
     param :system_uuids, Array, :required => false, :desc => N_("List of system uuids to be in the host collection")
     param_group :host_collection
     def create
-      @host_collection = HostCollection.new(host_collection_params)
-      if params['system_uuids']
-        systems_from_uuid = system_uuids_to_ids(params['system_uuids'])
-        @host_collection.system_ids = @host_collection.system_ids ?
-            @host_collection.system_ids + systems_from_uuid  : systems_from_uuid
-      end
+      @host_collection = HostCollection.new(host_collection_params_with_system_uuids)
       @host_collection.organization = @organization
       @host_collection.save!
       respond
@@ -77,9 +72,10 @@ module Katello
 
     api :PUT, "/host_collections/:id", N_("Update a host collection")
     param :id, :identifier, :desc => N_("Id of the host collection"), :required => true
+    param :system_uuids, Array, :required => false, :desc => N_("List of system uuids to be in the host collection")
     param_group :host_collection
     def update
-      @host_collection.update_attributes!(host_collection_params)
+      @host_collection.update_attributes!(host_collection_params_with_system_uuids)
       respond
     end
 
@@ -210,7 +206,17 @@ module Katello
 
     def host_collection_params
       attrs = [:name, :description, :max_content_hosts, { :system_ids => [] }]
-      params.require(:host_collection).permit(*attrs)
+      params.permit(*attrs)
+    end
+
+    def host_collection_params_with_system_uuids
+      result = host_collection_params
+      if params['system_uuids']
+        systems_from_uuid = system_uuids_to_ids(params['system_uuids'])
+        result['system_ids'] = result['system_ids'] ?
+            result['system_ids'] + systems_from_uuid : systems_from_uuid
+      end
+      result
     end
 
     def find_system
