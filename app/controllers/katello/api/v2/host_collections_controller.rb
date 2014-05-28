@@ -26,7 +26,7 @@ module Katello
 
     def_param_group :host_collection do
       param :name, String, :required => true, :desc => N_("Host Collection name")
-      param :system_ids, Array, :required => false, :desc => N_("List of system uuids to be in the host collection")
+      param :system_ids, Array, :required => false, :desc => N_("List of system ids to be in the host collection")
       param :description, String
       param :max_content_hosts, Integer, :desc => N_("Maximum number of content hosts in the host collection")
     end
@@ -61,6 +61,7 @@ module Katello
     api :POST, "/host_collections", N_("Create a host collection")
     api :POST, "/organizations/:organization_id/host_collections", N_("Create a host collection")
     param :organization_id, :number, :desc => N_("organization identifier"), :required => true
+    param :system_uuids, Array, :required => false, :desc => N_("List of system uuids to be in the host collection")
     param_group :host_collection
     def create
       @host_collection = HostCollection.new(host_collection_params)
