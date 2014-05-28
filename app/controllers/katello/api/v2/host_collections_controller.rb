@@ -200,10 +200,11 @@ module Katello
       fail HttpErrors::NotFound, _("Couldn't find host collection '%s'") % params[:id] if @host_collection.nil?
     end
 
-    def system_uuids_to_ids(ids)
-      system_ids = System.where(:uuid => ids).collect { |s| s.id }
-      fail Errors::NotFound.new(_("Systems [%s] not found.") % ids.join(',')) if system_ids.blank?
-      system_ids
+    def system_uuids_to_ids(uuids)
+      systems = System.where(:uuid => uuids)
+      ids_not_found = Set.new(uuids).subtract(systems.map(&:uuid))
+      fail Errors::NotFound.new(_("Systems [%s] not found.") % ids_not_found.to_a.join(',')) unless ids_not_found.blank?
+      systems.collect { |s| s.id }
     end
 
     def host_collection_params
