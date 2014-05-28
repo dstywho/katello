@@ -26,7 +26,7 @@ module Katello
 
     def_param_group :host_collection do
       param :name, String, :required => true, :desc => N_("Host Collection name")
-      param :system_ids, Array, :required => false, :desc => N_("List of system ids to be in the host collection")
+      param :system_ids, Array, :required => false, :desc => N_("List of system uuids to be in the host collection")
       param :description, String
       param :max_content_hosts, Integer, :desc => N_("Maximum number of content hosts in the host collection")
     end
