@@ -64,6 +64,11 @@ module Katello
     param_group :host_collection
     def create
       @host_collection = HostCollection.new(host_collection_params)
+      if params['system_uuids']
+        systems_from_uuid = system_uuids_to_ids(params['system_uuids'])
+        @host_collection.system_ids = @host_collection.system_ids ?
+            @host_collection.system_ids + systems_from_uuid  : systems_from_uuid
+      end
       @host_collection.organization = @organization
       @host_collection.save!
       respond
