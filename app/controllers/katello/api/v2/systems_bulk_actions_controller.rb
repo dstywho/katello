@@ -59,11 +59,17 @@ class Api::V2::SystemsBulkActionsController < Api::V2::ApiController
     unless params[:host_collection_ids].blank?
       display_messages = []
 
+      require 'debugger'
+      debugger
       @host_collections.each do |host_collection|
+        require 'debugger'
+        debugger
         pre_host_collection_count = host_collection.system_ids.count
         host_collection.system_ids =  (host_collection.system_ids + @systems.collect { |s| s.id }).uniq
+        debugger
         host_collection.save!
 
+        debugger
         final_count = host_collection.system_ids.count - pre_host_collection_count
         display_messages << _("Successfully added %{count} content host(s) to host collection %{host_collection}.") %
             {:count => final_count, :host_collection => host_collection.name }
