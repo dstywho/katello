@@ -53,9 +53,13 @@ class Api::V2::SystemsBulkActionsControllerTest < ActionController::TestCase
 
   def test_add_host_collection
     assert_equal 1, @system1.host_collections.count # system initially has simple_host_collection
+
+    System.any_instance.stubs(:update_host_collections)
     put :bulk_add_host_collections, {:included => {:ids => @system_ids},
                                      :organization_id => @org.id,
                                      :host_collection_ids => [@host_collection1.id, @host_collection2.id]}
+    require 'debugger'
+    debugger
 
     assert_response :success
     assert_equal 2, @system1.host_collections.count
