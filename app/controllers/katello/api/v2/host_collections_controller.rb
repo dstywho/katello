@@ -213,8 +213,7 @@ module Katello
       result = host_collection_params
       if params['system_uuids']
         systems_from_uuid = system_uuids_to_ids(params['system_uuids'])
-        result['system_ids'] = result['system_ids'] ?
-            result['system_ids'] + systems_from_uuid : systems_from_uuid
+        result['system_ids'] = result['system_ids'] ?  result['system_ids'] + systems_from_uuid : systems_from_uuid
       end
       result
     end
