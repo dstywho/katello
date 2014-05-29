@@ -156,9 +156,9 @@ module Glue::ElasticSearch::System
     id_update = "ctx._source.host_collection_ids = [#{self.host_collection_ids.join(",")}]; "
     names = self.host_collections.pluck(:name).map{|name| "\"#{name}\""}
     name_update = "ctx._source.host_collection = [#{names.join(",")}];"
-    Tire.index System.index.name do
-      update System.document_type, system_id, {:script => id_update + name_update }
-    end
+    #Tire.index Katello::System.index.name do
+    #  update System.document_type, system_id, {:script => id_update + name_update }
+    #end
 
   end
 
