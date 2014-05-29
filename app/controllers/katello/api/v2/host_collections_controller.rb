@@ -206,7 +206,7 @@ module Katello
 
     def host_collection_params
       attrs = [:name, :description, :max_content_hosts, { :system_ids => [] }]
-      params.permit(*attrs)
+      params.fetch(:host_collection).permit(*attrs)
     end
 
     def host_collection_params_with_system_uuids
