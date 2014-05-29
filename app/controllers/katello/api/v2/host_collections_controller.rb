@@ -61,7 +61,7 @@ module Katello
     api :POST, "/host_collections", N_("Create a host collection")
     api :POST, "/organizations/:organization_id/host_collections", N_("Create a host collection")
     param :organization_id, :number, :desc => N_("organization identifier"), :required => true
-    param :system_uuids, Array, :required => false, :desc => N_("List of system uuids to be in the host collection")
+    param :system_uuids, Array, :required => false, :desc => N_("List of system uuids to replace the content hosts in host collection")
     param_group :host_collection
     def create
       @host_collection = HostCollection.new(host_collection_params_with_system_uuids)
