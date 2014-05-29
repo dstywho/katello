@@ -24,8 +24,8 @@ class HostCollection < Katello::Model
   has_many :activation_keys, :through => :key_host_collections
 
   has_many :system_host_collections, :class_name => "Katello::SystemHostCollection", :dependent => :destroy
-  has_many :systems, :through => :system_host_collections, :class_name => "Katello::System",
-    :after_add => :add_system, :after_remove => :remove_system
+  has_many :systems, :through => :system_host_collections, :class_name => "Katello::System"#,
+    #:after_add => :add_system, :after_remove => :remove_system
 
   has_many :jobs, :class_name => "Katello::Job", :as => :job_owner, :dependent => :nullify
 
