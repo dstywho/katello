@@ -79,18 +79,6 @@ class Api::V2::SystemsControllerTest < ActionController::TestCase
     end
   end
 
-  def test_create
-    post :create, :name => 'foo', :system_uuids => [@system.uuid]
-    assert_response :success
-  end
-
-  def test_create
-    non_existent_id = 1112321312312
-
-    post :create, :name => 'foo', :system_uuids => [non_existent_id]
-    assert_response :missing
-  end
-
   def test_refresh_subscriptions
     put :refresh_subscriptions, :id => @system.uuid
 
