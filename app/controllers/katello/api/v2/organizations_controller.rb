@@ -12,6 +12,21 @@
 
 module Katello
   class Api::V2::OrganizationsController < ::Api::V2::OrganizationsController
+    module ExtendOrganizationController
+      extend ActiveSupport::Concern
+      extend ::Apipie::DSL::Concern
+
+      api :PUT, '/organizations/:id', N_('Update organization')
+      param_group :resource, ::Api::V2::TaxonomiesController
+      param :description, String, :desc => N_("description")
+      param :redhat_repository_url, String, :desc => N_("Redhat CDN url")
+      def update
+        if params.key?(:redhat_repository_url)
+          @organization.redhat_provider.update_attributes!(:repository_url => params[:redhat_repository_url])
+        end
+        super
+      end
+    end
 
     include Api::V2::Rendering
     include ForemanTasks::Triggers
@@ -42,16 +57,8 @@ module Katello
       super
     end
 
-    api :PUT, '/organizations/:id', N_('Update organization')
-    param_group :resource, ::Api::V2::TaxonomiesController
-    param :description, String, :desc => N_("description")
-    param :redhat_repository_url, String, :desc => N_("Redhat CDN url")
-    def update
-      if params.key?(:redhat_repository_url)
-        @organization.redhat_provider.update_attributes!(:repository_url => params[:redhat_repository_url])
-      end
-      super
-    end
+    apipie_concern_subst(:a_resource => "an organization", :resource => "organization")
+    include ExtendOrganizationController
 
     api :POST, '/organizations', N_('Create organization')
     param :name, String, :desc => N_("name"), :required => true
