@@ -31,6 +31,7 @@ module Katello
     end
 
     api :GET, "/gpg_keys", N_("List gpg keys")
+    param :name, :identifier, :action_aware => true, :required => false, :desc => N_("identifier of the gpg key")
     param :organization_id, :number, :desc => N_("organization identifier"), :required => true
     param_group :search, Api::V2::ApiController
     def index

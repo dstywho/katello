@@ -43,6 +43,7 @@ class Api::V2::RepositoriesController < Api::V2::ApiController
   api :GET, "/content_views/:id/repositories", N_("List of repositories for a content view")
   param :organization_id, :number, :required => true, :desc => N_("ID of an organization to show repositories in")
   param :product_id, :number, :desc => N_("ID of a product to show repositories of")
+  param :gpg_key_id, :number, :desc => N_("show repositories of")
   param :environment_id, :number, :desc => N_("ID of an environment to show repositories in")
   param :content_view_id, :number, :desc => N_("ID of a content view to show repositories in")
   param :library, :bool, :desc => N_("show repositories in Library and the default content view")
