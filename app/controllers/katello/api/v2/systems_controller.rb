@@ -69,11 +69,11 @@ class Api::V2::SystemsController < Api::V2::ApiController
     uuids = System.readable.pluck(:uuid)
     filters << {:terms => {:uuid => uuids}}
 
-    if params[:organization_id]
+    if params[:environment_id]
+      filters << {:terms => {:environment_id => [params[:environment_id]] }}
+    elsif params[:organization_id]
       environment_ids = Organization.find(params[:organization_id]).kt_environments.pluck(:id)
       filters << {:terms => {:environment_id => environment_ids}}
-    elsif params[:environment_id]
-      filters << {:terms => {:environment_id => [params[:environment_id]] }}
     elsif params[:host_collection_id]
       filters << {:terms => {:host_collection_ids => [params[:host_collection_id]] }}
     end
