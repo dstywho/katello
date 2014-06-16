@@ -12,21 +12,6 @@
 
 module Katello
   class Api::V2::OrganizationsController < ::Api::V2::OrganizationsController
-    module ExtendOrganizationController
-      extend ActiveSupport::Concern
-      extend ::Apipie::DSL::Concern
-
-      api :PUT, '/organizations/:id', N_('Update organization')
-      param_group :resource, ::Api::V2::TaxonomiesController
-      param :description, String, :desc => N_("description")
-      param :redhat_repository_url, String, :desc => N_("Redhat CDN url")
-      def update
-        if params.key?(:redhat_repository_url)
-          @organization.redhat_provider.update_attributes!(:repository_url => params[:redhat_repository_url])
-        end
-        super
-      end
-    end
 
     include Api::V2::Rendering
     include ForemanTasks::Triggers
@@ -57,8 +42,22 @@ module Katello
       super
     end
 
-    apipie_concern_subst(:a_resource => "an organization", :resource => "organization")
-    include ExtendOrganizationController
+    api :PUT, '/organizations/:id', N_('Update organization')
+    # The organization param hash below is redefined from foreman's ::Api::V2::TaxonomiesController
+    # resource param_group instead of reusing the param_group :resource scoped from TaxonomiesController.
+    # This is because name substitutions of the param group's name from :resource to :organization are limited
+    # to the inclusion of a modules.
+    param :organization, Hash, :action_aware => true do
+      param :name, String, :required => true
+    end
+    param :description, String, :desc => N_("description")
+    param :redhat_repository_url, String, :desc => N_("Redhat CDN url")
+    def update
+      if params.key?(:redhat_repository_url)
+        @organization.redhat_provider.update_attributes!(:repository_url => params[:redhat_repository_url])
+      end
+      super
+    end
 
     api :POST, '/organizations', N_('Create organization')
     param :name, String, :desc => N_("name"), :required => true
