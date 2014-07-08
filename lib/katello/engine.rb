@@ -41,12 +41,6 @@ module Katello
       end
     end
 
-    initializer "katello.load_app_instance_data" do |app|
-      app.config.paths['db/migrate'] += Katello::Engine.paths['db/migrate'].existent
-      app.config.autoload_paths += Dir["#{config.root}/app/lib"]
-      app.config.autoload_paths += Dir["#{config.root}/app/services/katello"]
-      app.config.autoload_paths += Dir["#{config.root}/app/views/foreman"]
-    end
 
     initializer "katello.assets.paths", :group => :all do |app|
       app.config.sass.load_paths << "#{::UIAlchemy::Engine.root}/vendor/assets/ui_alchemy/alchemy-forms"
@@ -131,6 +125,14 @@ module Katello
       require 'katello/permissions'
     end
 
+    config.after_initialize do
+      #object = Object.new
+      #object.extend ForemanTasks::Triggers
+      #object.async_task 
+      #debugger
+      #ForemanTasks.async_task Katello::Actions::SubscriptionsSync
+    end
+
     rake_tasks do
       Rake::Task['db:seed'].enhance do
         Katello::Engine.load_seed
@@ -145,6 +147,7 @@ module Katello
       load "#{Katello::Engine.root}/lib/katello/tasks/asset_compile.rake"
       load "#{Katello::Engine.root}/lib/katello/tasks/clean_backend_objects.rake"
     end
+
 
   end
 
