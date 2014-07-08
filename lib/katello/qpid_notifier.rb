@@ -4,6 +4,7 @@ require 'debugger'
 module Katello
   class QpidNotifier
    TIMEOUT =  Qpid::Messaging::Duration::FOREVER
+   TIMEOUT =  Qpid::Messaging::Duration::SECOND
 
     def initialize(url, options, address)
       @address = address
@@ -14,11 +15,16 @@ module Katello
     def loop_forever
       loop do
         begin
+          debugger
           message = @receiver.fetch(TIMEOUT)
           notify_observers(message)
           @session.acknowledge message
-        rescue NoMessageAvailable
-          #do nothing
+        rescue NoMessageAvailable => e
+          debugger
+          puts e
+        rescue Exception => e
+          debugger
+          puts e
         end
       end
     end

@@ -32,25 +32,27 @@ module Katello
     end
 
     class SubscriptionsSyncObserver
+      LOGGER = Rails.logger
       def notify(message)
-        logger.debug("message received from subscriptions queue ")
-        logger.debug("message subject: #{message.subject}")
+        LOGGER.debug("message received from subscriptions queue ")
+        LOGGER.debug("message subject: #{message.subject}")
 
-        content = JSON.parse(message.content)
-        system_uuid = content['principalStore']['name']
-        pool_id = content['referenceId']
-        system = System.find_by_uuid!(system_uuid)
-        organization = system.organization
-        pool = Katello::Pool.find_pool(cp_pool['id'])
+        User.current = User.anonymous_admin
+
         case message.subject
-        when "entitlement.delete"
-          logger.info "reindexing #{pool_id}."
-          Katello::Pool.index_pools([pool])
-        when "entitlement.create"
-          logger.info "reindexing #{pool_id}."
+        when /entitlement\.(deleted|created)$/
+        content = JSON.parse(message.content)
+        #system_uuid = content['principalStore']['name']
+        pool_id = content['referenceId']
+        #system = System.find_by_uuid!(system_uuid)
+        #organization = system.organization
+        pool = Katello::Pool.find_pool(pool_id)
+          debugger
+          LOGGER.info "re-indexing for #{pool_id}."
           Katello::Pool.index_pools([pool])
         else
-          logger.fatal "message subject unexpected."
+          LOGGER.fatal "message subject unexpected."
+          raise "message subject unexpected"
         end
       end
     end
