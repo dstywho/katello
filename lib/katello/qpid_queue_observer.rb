@@ -2,7 +2,7 @@ require 'qpid_messaging'
 require 'debugger'
 
 module Katello
-  class QpidNotifier
+  class QpidQueueObserver
    TIMEOUT =  Qpid::Messaging::Duration::FOREVER
    TIMEOUT =  Qpid::Messaging::Duration::SECOND
 
@@ -12,20 +12,28 @@ module Katello
       @observers ||= []
     end
 
-    def loop_forever
+    def loop_forever(&block)
       loop do
-        begin
-          debugger
-          message = @receiver.fetch(TIMEOUT)
-          notify_observers(message)
-          @session.acknowledge message
-        rescue NoMessageAvailable => e
-          debugger
-          puts e
-        rescue Exception => e
-          debugger
-          puts e
-        end
+        yield if block_given?
+        retreive_and_notify
+      end
+    end
+
+    def retrieve(&block)
+      message = nil
+      begin
+        message = @receiver.fetch(TIMEOUT)
+        yield(message) if block_given?
+        @session.acknowledge message
+      rescue NoMessageAvailable
+        #no message that's fine
+      end
+    end
+
+    def retreive_and_notify
+      retrieve do |message|
+        debugger
+        notify_observers(message)
       end
     end
 
