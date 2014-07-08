@@ -40,6 +40,6 @@ module Katello
   require "katello/load_configuration"
   require "katello/logging"
   require 'katello/middleware/silenced_logger.rb'
-  require 'katello/qpid_notifier.rb'
+  require 'katello/qpid_queue_observer.rb'
 
 end

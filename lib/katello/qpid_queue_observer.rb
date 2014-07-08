@@ -14,8 +14,8 @@ module Katello
 
     def loop_forever(&block)
       loop do
-        yield if block_given?
         retreive_and_notify
+        yield if block_given?
       end
     end
 

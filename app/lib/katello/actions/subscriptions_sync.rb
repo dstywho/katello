@@ -12,18 +12,45 @@
 
 module Katello
   module Actions
-    class SubscriptionsSync < Dynflow::Action
+    class QpidEntitlementPoolPoll < Dynflow::Action
+      include Dynflow::Action::Polling
+
+      def done?
+        false
+      end
+
+      def poll_external_task
+        @@notifier.retreive_and_notify
+        true
+      end
+
+      def invoke_external_task
+        @@notifier = QpidQueueObserver.new(Katello.config.qpid.url, {:transport => 'ssl'}, Katello.config.qpid.subscriptions_queue_address)
+        @@notifier.start
+        @@notifier.register(ReindexPoolSubscriptionHandler.new)
+        true
+      end
+
+      def poll_intervals
+        [2, 4, 8, 16]
+      end
+    end
+
+    class QpidEntitlementPoolIndexSync < Dynflow::Action
 
       def plan
         plan_self
       end
 
       def run
-        notifier = QpidNotifier.new(Katello.config.qpid.url, {:transport => 'ssl'}, Katello.config.qpid.subscriptions_queue_address)
+        notifier = QpidQueueObserver.new(Katello.config.qpid.url, {:transport => 'ssl'}, Katello.config.qpid.subscriptions_queue_address)
         notifier.start
-        notifier.register(SubscriptionsSyncObserver.new)
+        notifier.register(ReindexPoolSubscriptionHandler.new)
         output[:notifier] = notifier
-        notifier.loop_forever
+        notifier.loop_forever do
+          debugger
+          suspend { |suspended_action| world.clock.ping suspended_action, 1, nil}
+        end
       end
 
       def finalize
@@ -31,7 +58,7 @@ module Katello
       end
     end
 
-    class SubscriptionsSyncObserver
+    class ReindexPoolSubscriptionHandler
       LOGGER = Rails.logger
       def notify(message)
         LOGGER.debug("message received from subscriptions queue ")
@@ -41,14 +68,11 @@ module Katello
 
         case message.subject
         when /entitlement\.(deleted|created)$/
-        content = JSON.parse(message.content)
-        #system_uuid = content['principalStore']['name']
-        pool_id = content['referenceId']
-        #system = System.find_by_uuid!(system_uuid)
-        #organization = system.organization
-        pool = Katello::Pool.find_pool(pool_id)
+          content = JSON.parse(message.content)
+          pool_id = content['referenceId']
+          pool = Katello::Pool.find_pool(pool_id)
           debugger
-          LOGGER.info "re-indexing for #{pool_id}."
+          LOGGER.info "re-indexing #{pool_id}."
           Katello::Pool.index_pools([pool])
         else
           LOGGER.fatal "message subject unexpected."
