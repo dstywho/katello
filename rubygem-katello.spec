@@ -139,6 +139,7 @@ Requires: %{?scl_prefix}rubygem-haml-rails
 Requires: %{?scl_prefix}rubygem-ui_alchemy-rails = 1.0.12
 Requires: %{?scl_prefix}rubygem-deface < 1.0.0
 Requires: %{?scl_prefix}rubygem-strong_parameters
+Requires: %{?scl_prefix}qpid_messaging >= 0.26.1
 BuildRequires: foreman >= 1.3.0
 BuildRequires: %{?scl_prefix}rubygem-angular-rails-templates >= 0.0.4
 BuildRequires: %{?scl_prefix}rubygem-net-ldap

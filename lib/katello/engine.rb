@@ -44,7 +44,7 @@ module Katello
     initializer "katello.sync", :after => "katello.set_dynflow_middlewares" do |app|
       unless Rails.env.test?
         #ForemanTasks.async_task Katello::Actions::QpidEntitlementPoolIndexSync
-        ForemanTasks.async_task Katello::Actions::QpidEntitlementPoolPoll
+        ForemanTasks.async_task ::Actions::Katello::Subscription::SyncQpidEntitlementPoolQueue
       end
     end
 
@@ -64,7 +64,6 @@ module Katello
       ActionView::Base.send :include, Katello::HostsAndHostgroupsHelper
       ActionView::Base.send :include, Katello::KatelloUrlsHelper
     end
-
 
     initializer "logging" do |app|
       if caller.last =~ /script\/delayed_job:\d+$/ ||
@@ -132,14 +131,6 @@ module Katello
       require 'katello/permissions'
     end
 
-    config.after_initialize do
-      #object = Object.new
-      #object.extend ForemanTasks::Triggers
-      #object.async_task 
-      #debugger
-      #ForemanTasks.async_task Katello::Actions::SubscriptionsSync
-    end
-
     rake_tasks do
       Rake::Task['db:seed'].enhance do
         Katello::Engine.load_seed
@@ -154,7 +145,6 @@ module Katello
       load "#{Katello::Engine.root}/lib/katello/tasks/asset_compile.rake"
       load "#{Katello::Engine.root}/lib/katello/tasks/clean_backend_objects.rake"
     end
-
 
   end
 
