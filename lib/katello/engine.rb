@@ -48,6 +48,13 @@ module Katello
       end
     end
 
+    initializer "katello.load_app_instance_data" do |app|
+      app.config.paths['db/migrate'] += Katello::Engine.paths['db/migrate'].existent
+      app.config.autoload_paths += Dir["#{config.root}/app/lib"]
+      app.config.autoload_paths += Dir["#{config.root}/app/services/katello"]
+      app.config.autoload_paths += Dir["#{config.root}/app/views/foreman"]
+    end
+
     initializer "katello.assets.paths", :group => :all do |app|
       app.config.sass.load_paths << "#{::UIAlchemy::Engine.root}/vendor/assets/ui_alchemy/alchemy-forms"
       app.config.sass.load_paths << "#{::UIAlchemy::Engine.root}/vendor/assets/ui_alchemy/alchemy-buttons"
