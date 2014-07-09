@@ -16,6 +16,10 @@ module Actions
       class SyncQpidEntitlementPoolQueue < Dynflow::Action
         include Dynflow::Action::Polling
 
+        def humanized_name
+          "Qpid Queue Subscription Polling Task"
+        end
+
         def done?
           false
         end
@@ -26,7 +30,7 @@ module Actions
         end
 
         def invoke_external_task
-          @@notifier = QpidQueueObserver.new(Katello.config.qpid.url, {:transport => 'ssl'}, Katello.config.qpid.subscriptions_queue_address)
+          @@notifier = ::Katello::QpidQueueObserver.new(::Katello.config.qpid.url, {:transport => 'ssl'}, ::Katello.config.qpid.subscriptions_queue_address)
           @@notifier.start
           @@notifier.register(ReindexPoolSubscriptionHandler.new)
           true

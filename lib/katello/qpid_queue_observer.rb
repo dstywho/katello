@@ -3,7 +3,6 @@ require 'debugger'
 
 module Katello
   class QpidQueueObserver
-   TIMEOUT =  Qpid::Messaging::Duration::FOREVER
    TIMEOUT =  Qpid::Messaging::Duration::SECOND
 
     def initialize(url, options, address)
