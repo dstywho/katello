@@ -117,6 +117,7 @@ angular.module('Bastion.content-hosts').config(['$stateProvider', function ($sta
         url: '/tasks',
         permission: 'view_content_hosts',
         collapsed: true,
+        controller: 'ContentHostTasksEventsController',
         templateUrl: 'content-hosts/details/views/content-host-tasks.html'
     })
     .state('content-hosts.details.tasks.details', {

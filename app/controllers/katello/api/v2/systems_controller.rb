@@ -23,7 +23,7 @@ class Api::V2::SystemsController < Api::V2::ApiController
                                         :package_profile, :errata,
                                         :pools, :enabled_repos, :releases,
                                         :available_host_collections,
-                                        :refresh_subscriptions, :tasks, :content_override]
+                                        :refresh_subscriptions, :tasks, :content_override, :events]
   before_filter :find_environment, :only => [:index, :report]
   before_filter :find_optional_organization, :only => [:create, :index, :activate, :report]
   before_filter :find_host_collection, :only => [:index]
@@ -267,6 +267,11 @@ class Api::V2::SystemsController < Api::V2::ApiController
     @system.set_content_override(content_override[:content_label],
                                  content_override[:name], content_override[:value]) if content_override
     respond_for_show
+  end
+
+  def events
+    @events = @system.events.map{ |e| OpenStruct.new(e) }
+    respond_for_index :collection => @events
   end
 
   private
