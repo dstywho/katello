@@ -90,5 +90,13 @@ angular.module('Bastion.content-hosts').controller('ContentHostDetailsController
 
             return deferred.promise;
         };
+
+        $scope.subscriptionsMenu = {items: [
+            {display: 'Subscriptions', type: 'dropdown', items: [
+                {uisref: 'content-hosts.details.subscriptions.list', display: 'Subscriptions'},
+                {uisref: 'content-hosts.details.events', display: 'Entitlements'}
+            ]}
+        ]};
+
     }]
 );

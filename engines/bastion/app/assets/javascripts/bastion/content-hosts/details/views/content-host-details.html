@@ -40,11 +40,8 @@
           Provisioning Details
         </a>
       </li>
-      <li ng-class="{active: isState('content-hosts.details.subscriptions.list')}">
-        <a translate
-           ui-sref="content-hosts.details.subscriptions.list">
-          Subscriptions
-        </a>
+      <li ng-class="{active: stateIncludes('content-hosts.details.subscriptions.list') || stateIncludes('content-hosts.details.events')}">
+        <nav alch-menu="subscriptionsMenu"></nav>
       </li>
       <li ng-class="{active: $state.includes('content-hosts.details.host-collections')}">
         <a translate
