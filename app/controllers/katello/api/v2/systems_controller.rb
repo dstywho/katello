@@ -269,6 +269,8 @@ class Api::V2::SystemsController < Api::V2::ApiController
     respond_for_show
   end
 
+  api :GET, "/systems/:id/events", N_("List Candlepin events for the content host")
+  param :id, String, :desc => N_("UUID of the content host"), :required => true
   def events
     @events = @system.events.map{ |e| OpenStruct.new(e) }
     respond_for_index :collection => @events
