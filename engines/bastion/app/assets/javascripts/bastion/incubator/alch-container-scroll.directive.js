@@ -22,7 +22,7 @@ angular.module('alchemy').directive('alchContainerScroll', ['$window', '$timeout
         compile: function (tElement, attrs) {
             tElement.addClass("container-scroll-wrapper");
             return function (scope, element) {
-                var windowElement = (tElement.closest('.nutupane-sub-section').length > 0) ? tElement.closest('.nutupane-sub-section') : angular.element($window);
+                var windowElement = angular.element($window);
                 var addScroll = function () {
                     var windowWidth = windowElement.width(),
                         windowHeight = windowElement.height(),

@@ -40,8 +40,24 @@
           Provisioning Details
         </a>
       </li>
-      <li ng-class="{active: stateIncludes('content-hosts.details.subscriptions.list') || stateIncludes('content-hosts.details.events')}">
-        <nav alch-menu="subscriptionsMenu"></nav>
+      <li class="dropdown"
+          ng-class="{active: stateIncludes('content-hosts.details.subscriptions.list') || stateIncludes('content-hosts.details.events')}">
+        <a class="dropdown-toggle">
+          <span translate>Subscriptions</span>
+          <i class="icon-chevron-down"></i>
+        </a>
+        <ul class="dropdown-menu">
+          <li>
+            <a ui-sref="content-hosts.details.subscriptions.list" translate>
+              Subscriptions
+            </a>
+          </li>
+          <li>
+            <a ui-sref="content-hosts.details.events" translate>
+              Events
+            </a>
+          </li>
+        </ul>
       </li>
       <li ng-class="{active: $state.includes('content-hosts.details.host-collections')}">
         <a translate
