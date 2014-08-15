@@ -32,8 +32,11 @@ angular.module('Bastion.organizations').factory('Organization',
                 autoAttachSubscriptions: {method: 'POST', params: {action: 'autoattach_subscriptions'}},
                 paths: {
                     method: 'GET',
+                    isArray: true,
                     url: '/api/v2/organizations/:id/environments/paths',
-                    transformResponse: function (data) { return data["results"] }
+                    transformResponse: function (data) {
+                        debugger;
+                        return angular.fromJson(data).results; }
                 },
                 readableEnvironments: {
                     method: 'GET',
